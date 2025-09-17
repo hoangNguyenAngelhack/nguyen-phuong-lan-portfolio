@@ -1,7 +1,7 @@
 "use client";
-import { IMAGE_HOME } from "@/mocks";
 import Image from "next/image";
 import Masonry from "react-masonry-css";
+import { useEffect, useState } from "react";
 
 const breakpointColumnsObj = {
   default: 3,
@@ -10,6 +10,13 @@ const breakpointColumnsObj = {
 };
 
 const HomeScreen = () => {
+  const [images, setImages] = useState<string[]>([]);
+  useEffect(() => {
+    fetch("/api/list-images")
+      .then((res) => res.json())
+      .then((data) => setImages(data.images || []));
+  }, []);
+
   return (
     <div className="max-w-[1200px] max-sm:max-w-[98%] mx-auto px-4">
       <Masonry
@@ -17,10 +24,10 @@ const HomeScreen = () => {
         className="masonry-grid"
         columnClassName="masonry-grid_column"
       >
-        {IMAGE_HOME.map((src, i) => (
+        {images.map((src, i) => (
           <div key={i} className="mb-8">
             <Image
-              src={src}
+              src={`/${src}`}
               alt="Artwork"
               className="gallery-img w-full h-auto object-cover"
               width={400}

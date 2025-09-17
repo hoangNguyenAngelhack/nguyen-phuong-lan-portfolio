@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Pacifico, Caveat, Patrick_Hand } from "next/font/google";
-import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import "@/styles/globals.css";
 
 const PacificoSans = Pacifico({
   variable: "--font-pacifico-sans",

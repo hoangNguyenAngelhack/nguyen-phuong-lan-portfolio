@@ -1,5 +1,8 @@
 export const PERSONAL = "NGUYEN PHUONG LAN";
 
+export const ADMIN_USER = "admin";
+export const ADMIN_PASS = "lan123";
+
 export const LINKS = {
   instagram: "https://www.instagram.com/",
   facebook: "https://www.facebook.com/",
