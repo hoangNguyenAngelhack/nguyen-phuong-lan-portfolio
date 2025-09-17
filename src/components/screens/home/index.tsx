@@ -11,25 +11,27 @@ const breakpointColumnsObj = {
 
 const HomeScreen = () => {
   return (
-    <Masonry
-      breakpointCols={breakpointColumnsObj}
-      className="masonry-grid"
-      columnClassName="masonry-grid_column"
-    >
-      {IMAGE_HOME.map((src, i) => (
-        <div key={i} className="mb-8">
-          <Image
-            src={src}
-            alt="Artwork"
-            className="gallery-img w-full h-auto object-cover"
-            width={400}
-            height={500}
-            sizes="(max-width: 600px) 100vw, 400px"
-            priority={i < 2}
-          />
-        </div>
-      ))}
-    </Masonry>
+    <div className="max-w-[1200px] max-sm:max-w-[98%] mx-auto px-4">
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="masonry-grid"
+        columnClassName="masonry-grid_column"
+      >
+        {IMAGE_HOME.map((src, i) => (
+          <div key={i} className="mb-8">
+            <Image
+              src={src}
+              alt="Artwork"
+              className="gallery-img w-full h-auto object-cover"
+              width={400}
+              height={500}
+              sizes="(max-width: 600px) 100vw, 400px"
+              priority={i < 2}
+            />
+          </div>
+        ))}
+      </Masonry>
+    </div>
   );
 };
 

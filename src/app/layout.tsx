@@ -73,6 +73,7 @@ export default function RootLayout({
               color: "#ec4899",
               marginBottom: "1.5rem",
               textAlign: "center",
+              maxWidth: "98%",
             }}
           >
             A gentle little corner just for you 💖
