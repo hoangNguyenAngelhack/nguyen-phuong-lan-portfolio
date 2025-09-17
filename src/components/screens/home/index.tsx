@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Masonry from "react-masonry-css";
 import { useEffect, useState } from "react";
+import { CloudinaryImageList } from "@/app/(auth)/admin/page";
 
 const breakpointColumnsObj = {
   default: 3,
@@ -10,7 +11,7 @@ const breakpointColumnsObj = {
 };
 
 const HomeScreen = () => {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<CloudinaryImageList>([]);
   useEffect(() => {
     fetch("/api/list-images")
       .then((res) => res.json())
@@ -27,8 +28,8 @@ const HomeScreen = () => {
         {images.map((src, i) => (
           <div key={i} className="mb-8">
             <Image
-              src={`/${src}`}
-              alt="Artwork"
+              src={`/${src?.secure_url}`}
+              alt={src?.display_name}
               className="gallery-img w-full h-auto object-cover"
               width={400}
               height={500}

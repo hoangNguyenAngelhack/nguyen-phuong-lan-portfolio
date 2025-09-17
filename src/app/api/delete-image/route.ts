@@ -1,22 +1,38 @@
+// app/api/images/delete/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { unlink } from "fs/promises";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 export const runtime = "nodejs";
 
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+});
+
 export async function POST(req: NextRequest) {
-  const { filename } = await req.json();
-  if (!filename) {
+  const { public_id } = await req.json();
+
+  if (!public_id) {
     return NextResponse.json(
-      { error: "No filename provided" },
+      { error: "No public_id provided" },
       { status: 400 }
     );
   }
-  const filePath = path.join(process.cwd(), "public", filename);
+
   try {
-    await unlink(filePath);
-    return NextResponse.json({ success: true });
-  } catch (e) {
-    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+    const result = await cloudinary.uploader.destroy(public_id);
+
+    if (result.result === "ok") {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json(
+        { error: "Delete failed", detail: result },
+        { status: 500 }
+      );
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

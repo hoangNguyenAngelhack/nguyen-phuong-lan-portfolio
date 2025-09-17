@@ -4,13 +4,34 @@ import { ADMIN_PASS, ADMIN_USER } from "@/mocks";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 
+export type CloudinaryImage = {
+  asset_folder: string;
+  asset_id: string;
+  bytes: number;
+  created_at: string;
+  display_name: string;
+  format: string;
+  height: number;
+  public_id: string;
+  resource_type: string;
+  secure_url: string;
+  type: string;
+  url: string;
+  version: number;
+  width: number;
+};
+
+export type CloudinaryImageList = CloudinaryImage[];
+
 export default function AdminUpload() {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<CloudinaryImageList>([]);
   const fileInput = useRef<HTMLInputElement>(null);
   const userRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
+
+  console.log(images);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -120,13 +141,13 @@ export default function AdminUpload() {
         <div className="mt-4 text-center text-pink-600">{message}</div>
       )}
       <div className="mt-8">
-        <h2 className="font-semibold mb-2">Ảnh đã upload:</h2>
+        <h2 className="font-semibold mb-2">Images đã upload:</h2>
         <div className="grid grid-cols-2 gap-4">
           {images.map((img) => (
-            <div key={img} className="relative group">
+            <div key={img.asset_id} className="relative group">
               <Image
-                src={`/${img}`}
-                alt={img}
+                src={`/${img?.secure_url}`}
+                alt={img.display_name}
                 className="w-full rounded shadow object-cover"
                 width={400}
                 height={500}

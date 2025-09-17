@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 export const runtime = "nodejs";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -12,8 +17,31 @@ export async function POST(req: NextRequest) {
   }
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
-  const filename = Date.now() + "-" + file.name.replace(/\s+/g, "-");
-  const uploadPath = path.join(process.cwd(), "public", filename);
-  await writeFile(uploadPath, buffer);
-  return NextResponse.json({ success: true, filename });
+  // Tạo form data gửi lên Cloudinary
+  const form = new FormData();
+  form.append("file", new Blob([buffer]));
+  form.append("upload_preset", "ml_default");
+
+  return new Promise((resolve) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "image",
+        type: "upload",
+        max_results: 100,
+      },
+      (error, result) => {
+        if (error) {
+          resolve(
+            NextResponse.json(
+              { error: "Upload failed", details: error },
+              { status: 500 }
+            )
+          );
+        } else {
+          resolve(NextResponse.json({ url: result?.secure_url }));
+        }
+      }
+    );
+    stream.end(buffer);
+  });
 }
