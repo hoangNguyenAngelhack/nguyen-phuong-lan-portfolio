@@ -9,7 +9,7 @@ cloudinary.config({
   api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
 });
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
   const formData = await req.formData();
   const file = formData.get("file") as File;
   if (!file) {
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   form.append("file", new Blob([buffer]));
   form.append("upload_preset", "ml_default");
 
-  return new Promise((resolve) => {
+  return new Promise<Response>((resolve) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         resource_type: "image",
