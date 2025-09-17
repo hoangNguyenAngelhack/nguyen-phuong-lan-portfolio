@@ -11,8 +11,8 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
-  const { public_id } = await req.json();
-
+  const body = await req.json();
+  const public_id = body.public_id || body.filename?.public_id;
   if (!public_id) {
     return NextResponse.json(
       { error: "No public_id provided" },
