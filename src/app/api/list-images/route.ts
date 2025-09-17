@@ -26,7 +26,6 @@ export async function GET() {
 
     const data = result;
 
-    // Trả về mảng ảnh
     return NextResponse.json({ images: data.resources });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

@@ -146,7 +146,9 @@ export default function AdminUpload() {
           {images.map((img) => (
             <div key={img.asset_id} className="relative group">
               <Image
-                src={`/${img?.secure_url}`}
+                src={`/api/proxy?imageUrl=${encodeURIComponent(
+                  img?.secure_url as string
+                )}`}
                 alt={img.display_name}
                 className="w-full rounded shadow object-cover"
                 width={400}
