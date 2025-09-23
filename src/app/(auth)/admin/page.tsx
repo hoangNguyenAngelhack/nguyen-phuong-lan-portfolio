@@ -1,8 +1,16 @@
 "use client";
 
-import { ADMIN_PASS, ADMIN_USER } from "@/mocks";
+import { useRef, useState, useEffect, Fragment } from "react";
+import Masonry from "react-masonry-css";
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
+
+import { ADMIN_PASS, ADMIN_USER } from "@/mocks";
+
+const breakpointColumnsObj = {
+  default: 3,
+  1100: 2,
+  700: 1,
+};
 
 export type CloudinaryImage = {
   asset_folder: string;
@@ -121,38 +129,45 @@ export default function AdminUpload() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Admin: Upload Image</h1>
-      <form onSubmit={handleUpload} className="flex flex-col gap-4">
-        <input
-          className="border px-2 py-1 rounded"
-          type="file"
-          accept="image/*"
-          ref={fileInput}
-        />
-        <button
-          type="submit"
-          className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
+    <Fragment>
+      <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+        <h1 className="text-2xl font-bold mb-4">Admin: Upload Image</h1>
+        <form onSubmit={handleUpload} className="flex flex-col gap-4">
+          <input
+            className="border px-2 py-1 rounded"
+            type="file"
+            accept="image/*"
+            ref={fileInput}
+          />
+          <button
+            type="submit"
+            className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
+          >
+            Upload
+          </button>
+        </form>
+        {message && (
+          <div className="mt-4 text-center text-pink-600">{message}</div>
+        )}
+      </div>
+      <div className="mt-8 w-full mx-auto p-4 bg-white rounded shadow">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="masonry-grid"
+          columnClassName="masonry-grid_column"
         >
-          Upload
-        </button>
-      </form>
-      {message && (
-        <div className="mt-4 text-center text-pink-600">{message}</div>
-      )}
-      <div className="mt-8">
-        <h2 className="font-semibold mb-2">Images đã upload:</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {images.map((img) => (
-            <div key={img.asset_id} className="relative group">
+          {images.map((img, i) => (
+            <div key={i} className="mb-8 relative">
               <Image
                 src={`/api/proxy?imageUrl=${encodeURIComponent(
                   img?.secure_url as string
                 )}`}
-                alt={img.display_name}
-                className="w-full rounded shadow object-cover"
+                alt={img?.display_name}
+                className="w-full h-auto object-cover"
                 width={400}
                 height={500}
+                sizes="(max-width: 600px) 100vw, 400px"
+                priority={i < 2}
               />
               <button
                 onClick={async () => {
@@ -165,15 +180,15 @@ export default function AdminUpload() {
                     if (res.ok) fetchImages();
                   }
                 }}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                className="absolute top-2 right-2 bg-red-500 text-white rounded px-2 py-1 text-xs"
                 title="Xóa ảnh"
               >
                 Xóa
               </button>
             </div>
           ))}
-        </div>
+        </Masonry>
       </div>
-    </div>
+    </Fragment>
   );
 }
