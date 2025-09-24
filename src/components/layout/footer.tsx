@@ -5,8 +5,8 @@ export const Footer = () => {
     <footer className="homepage-footer">
       <div>2025 | {PERSONAL} | PROFESSIONAL ILLUSTRATOR</div>
       <div className="footer-links">
-        <a href={LINKS.instagram} target="_blank" rel="noopener noreferrer">
-          Instagram
+        <a href={LINKS.behance} target="_blank" rel="noopener noreferrer">
+          Behance
         </a>
         <span> | </span>
         <a href={LINKS.facebook} target="_blank" rel="noopener noreferrer">

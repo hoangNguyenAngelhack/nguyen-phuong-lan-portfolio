@@ -1,9 +1,9 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { LINKS, PERSONAL } from "@/mocks";
-import { Instagram } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export const Header = () => {
   const pathname = usePathname();
@@ -23,12 +23,18 @@ export const Header = () => {
             {PERSONAL}
           </div>
           <a
-            href={LINKS.instagram}
+            href={LINKS.behance}
             target="_blank"
             rel="noopener noreferrer"
             className="absolute right-0 max-sm:hidden hover:rotate-360 transition-transform duration-300"
           >
-            <Instagram size={32} className="sm:size-[40px]" />
+            <Image
+              src="/images/behance.png"
+              className="sm:size-[40px]"
+              alt="Behance Logo"
+              width={40}
+              height={40}
+            />
           </a>
         </div>
         <nav className="h-[40px] max-sm:h-[36px] w-full flex flex-wrap justify-center items-center">

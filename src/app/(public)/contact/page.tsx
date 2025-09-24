@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Instagram, Mail, Phone } from "lucide-react";
+import { EMAIL_USER, PHONE_NUMBER } from "@/mocks";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -164,7 +165,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">Email</h3>
-                  <p className="text-gray-600">contact@lannguyen.com</p>
+                  <p className="text-gray-600">{EMAIL_USER}</p>
                   <p className="text-sm text-gray-500 mt-1">
                     I typically respond within 24 hours
                   </p>
@@ -190,7 +191,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">Phone</h3>
-                  <p className="text-gray-600">+84 123 456 789</p>
+                  <p className="text-gray-600">{PHONE_NUMBER}</p>
                   <p className="text-sm text-gray-500 mt-1">
                     Available Mon-Fri, 9AM-6PM (GMT+7)
                   </p>

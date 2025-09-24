@@ -1,3 +1,4 @@
+import { EMAIL_USER } from "@/mocks";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -132,7 +133,7 @@ const AboutPage = () => {
         </p>
         <div className="space-x-4">
           <a
-            href="mailto:contact@example.com"
+            href={`mailto:${EMAIL_USER}`}
             className="inline-block bg-pink-500 text-white px-8 py-3 rounded-full font-medium hover:bg-pink-600 transition-colors"
           >
             Get In Touch
