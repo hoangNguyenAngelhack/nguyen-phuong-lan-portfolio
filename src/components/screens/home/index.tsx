@@ -28,7 +28,7 @@ const HomeScreen = () => {
         {images.map((src, i) => (
           <div key={i} className="mb-8">
             <Image
-              src={`/api/proxy?imageUrl=${encodeURIComponent(
+              src={`/api/proxy?url=${encodeURIComponent(
                 src?.secure_url as string
               )}`}
               alt={src?.display_name}

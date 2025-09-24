@@ -159,7 +159,7 @@ export default function AdminUpload() {
           {images.map((img, i) => (
             <div key={i} className="mb-8 relative">
               <Image
-                src={`/api/proxy?imageUrl=${encodeURIComponent(
+                src={`/api/proxy?url=${encodeURIComponent(
                   img?.secure_url as string
                 )}`}
                 alt={img?.display_name}
