@@ -45,7 +45,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <div className="max-w-[1200px] max-sm:max-w-[98%] mx-auto px-4">
+    <div className="max-w-[1200px] max-sm:max-w-[98%] mx-auto px-4 min-h-[700px]">
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="masonry-grid"

@@ -143,7 +143,7 @@ const ProjectsPage = () => {
               <div className="absolute inset-0 bg-black/20 bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
                 <button
                   onClick={() => setSelectedProject(project)}
-                  className="opacity-0 group-hover:opacity-100 bg-white text-gray-800 px-4 py-2 rounded-full font-medium flex items-center gap-2 transition-all duration-300 hover:bg-gray-100"
+                  className="opacity-0 group-hover:opacity-100 bg-white text-gray-800 px-4 py-2 rounded-full font-medium flex items-center gap-2 transition-all duration-300 hover:bg-gray-100 cursor-pointer"
                 >
                   <Eye className="w-4 h-4" />
                   View Details
