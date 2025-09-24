@@ -94,7 +94,7 @@ export default function RootLayout({
                     splash.style.opacity = '0';
                     setTimeout(function() { splash.style.display = 'none'; }, 500);
                   }
-                }, 3200);
+                }, 2200);
               });
             `,
           }}
