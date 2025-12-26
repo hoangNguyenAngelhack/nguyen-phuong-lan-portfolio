@@ -3,6 +3,7 @@ import { Pacifico, Caveat, Patrick_Hand } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { ClientProviders } from "@/components/providers/client-providers";
 import "@/styles/globals.css";
 
 const PacificoSans = Pacifico({
@@ -99,9 +100,11 @@ export default function RootLayout({
             `,
           }}
         />
-        <Header />
-        {children}
-        <Footer />
+        <ClientProviders>
+          <Header />
+          {children}
+          <Footer />
+        </ClientProviders>
       </body>
     </html>
   );
