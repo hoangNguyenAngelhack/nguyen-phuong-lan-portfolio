@@ -4,82 +4,14 @@ import { motion } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { BEHANCE_IMAGES } from "@/mocks";
 
-// Behance images for fallback
-const BEHANCE_FEATURED = [
-  {
-    url: "https://mir-s3-cdn-cf.behance.net/projects/404/cae886218427163.Y3JvcCwyODcxLDIyNDYsMjgsMA.png",
-    name: "Minh họa truyện Mèo Mini",
-  },
-  {
-    url: "https://mir-s3-cdn-cf.behance.net/projects/404/67f411225383483.Y3JvcCwxMTkyLDkzMywxMDMsMA.png",
-    name: "Vẽ Commission",
-  },
-  {
-    url: "https://mir-s3-cdn-cf.behance.net/projects/404/6cb5ee221058433.Y3JvcCwxNzEyLDEzMzksMCw1NTk.png",
-    name: "Bìa sách",
-  },
-];
-
-type FeaturedImage = {
-  url: string;
-  name: string;
-  isCloudinary?: boolean;
-};
+const featuredImages = BEHANCE_IMAGES.slice(0, 3);
 
 export const HeroSection = () => {
-  const [featuredImages, setFeaturedImages] = useState<FeaturedImage[]>([]);
-
-  useEffect(() => {
-    fetch("/api/list-images")
-      .then((res) => res.json())
-      .then((data) => {
-        const cloudinaryImages = (data.images || []).slice(0, 3).map(
-          (img: { secure_url: string; display_name: string }) => ({
-            url: img.secure_url,
-            name: img.display_name || "Artwork",
-            isCloudinary: true,
-          })
-        );
-        // If we have cloudinary images, use them; otherwise use Behance
-        if (cloudinaryImages.length >= 3) {
-          setFeaturedImages(cloudinaryImages);
-        } else {
-          // Fill remaining slots with Behance images
-          const remaining = 3 - cloudinaryImages.length;
-          setFeaturedImages([
-            ...cloudinaryImages,
-            ...BEHANCE_FEATURED.slice(0, remaining).map((img) => ({
-              url: img.url,
-              name: img.name,
-              isCloudinary: false,
-            })),
-          ]);
-        }
-      })
-      .catch(() => {
-        // On error, use Behance images
-        setFeaturedImages(
-          BEHANCE_FEATURED.map((img) => ({
-            url: img.url,
-            name: img.name,
-            isCloudinary: false,
-          }))
-        );
-      });
-  }, []);
-
   const scrollToGallery = () => {
     const gallery = document.getElementById("gallery");
     gallery?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const getImageSrc = (img: FeaturedImage) => {
-    if (img.isCloudinary) {
-      return `/api/proxy?url=${encodeURIComponent(img.url)}`;
-    }
-    return img.url;
   };
 
   return (
@@ -90,7 +22,7 @@ export const HeroSection = () => {
         <div className="absolute bottom-20 right-0 w-64 h-64 bg-purple-100/50 rounded-full blur-[80px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto w-full">
+      <div className="max-w-[1200px] mx-auto w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Side - Text Content */}
           <motion.div
@@ -170,70 +102,91 @@ export const HeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Featured Art */}
+          {/* Right Side - Featured Art Collage */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="order-1 lg:order-2"
           >
-            <div className="relative">
-              {/* Main Featured Image */}
-              {featuredImages[0] && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="relative z-10 rounded-2xl overflow-hidden shadow-2xl shadow-pink-500/10"
-                >
-                  <Image
-                    src={getImageSrc(featuredImages[0])}
-                    alt={featuredImages[0].name || "Featured artwork"}
-                    width={500}
-                    height={600}
-                    className="w-full h-auto object-cover"
-                    priority
-                  />
-                </motion.div>
-              )}
-
-              {/* Secondary Image - Behind left */}
+            <div className="relative flex items-center justify-center" style={{ minHeight: "520px" }}>
+              {/* Secondary Image - Behind left, tilted */}
               {featuredImages[1] && (
                 <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="absolute -left-8 top-12 w-32 h-40 rounded-xl overflow-hidden shadow-xl -z-0 hidden md:block"
+                  initial={{ opacity: 0, rotate: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: -8, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  whileHover={{ rotate: -2, scale: 1.05, zIndex: 20 }}
+                  className="absolute left-0 top-6 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-4 border-white z-[1] cursor-pointer hidden md:block"
                 >
                   <Image
-                    src={getImageSrc(featuredImages[1])}
+                    src={featuredImages[1].url}
                     alt={featuredImages[1].name || "Artwork"}
                     fill
                     className="object-cover"
+                    sizes="200px"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <span className="text-white text-sm" style={{ fontFamily: "Patrick Hand, cursive" }}>
+                      {featuredImages[1].name}
+                    </span>
+                  </div>
                 </motion.div>
               )}
 
-              {/* Third Image - Behind right */}
-              {featuredImages[2] && (
+              {/* Main Featured Image - Center, on top */}
+              {featuredImages[0] && (
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className="absolute -right-6 bottom-16 w-28 h-36 rounded-xl overflow-hidden shadow-xl -z-0 hidden md:block"
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  className="relative z-10 w-[75%] md:w-[65%] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-pink-500/20 border-4 border-white cursor-pointer"
                 >
                   <Image
-                    src={getImageSrc(featuredImages[2])}
+                    src={featuredImages[0].url}
+                    alt={featuredImages[0].name || "Featured artwork"}
+                    fill
+                    className="object-cover"
+                    sizes="400px"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <span className="text-white text-lg font-medium" style={{ fontFamily: "Patrick Hand, cursive" }}>
+                      {featuredImages[0].name}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Third Image - Behind right, tilted */}
+              {featuredImages[2] && (
+                <motion.div
+                  initial={{ opacity: 0, rotate: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 7, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  whileHover={{ rotate: 1, scale: 1.05, zIndex: 20 }}
+                  className="absolute right-0 bottom-6 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-4 border-white z-[1] cursor-pointer hidden md:block"
+                >
+                  <Image
+                    src={featuredImages[2].url}
                     alt={featuredImages[2].name || "Artwork"}
                     fill
                     className="object-cover"
+                    sizes="200px"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <span className="text-white text-sm" style={{ fontFamily: "Patrick Hand, cursive" }}>
+                      {featuredImages[2].name}
+                    </span>
+                  </div>
                 </motion.div>
               )}
 
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-pink-200/30 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl" />
+              <div className="absolute -top-6 -right-6 w-28 h-28 bg-pink-200/40 rounded-full blur-2xl" />
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-purple-200/40 rounded-full blur-2xl" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-pink-100/30 rounded-full blur-3xl -z-10" />
             </div>
           </motion.div>
         </div>
