@@ -11,6 +11,47 @@ export const LINKS = {
   behance: "https://www.behance.net/nguyenfplhn240",
 };
 
+export const SERVICES = [
+  {
+    no: "01",
+    title: "Book Illustration",
+    desc: "Cover art and full interior illustration for children's books, novels and artbooks.",
+  },
+  {
+    no: "02",
+    title: "Brand & Editorial",
+    desc: "Illustration systems, key visuals and packaging that give brands a distinct voice.",
+  },
+  {
+    no: "03",
+    title: "Character Design",
+    desc: "Original characters and worlds — from concept sheets to finished, story-ready art.",
+  },
+  {
+    no: "04",
+    title: "Commission & Motion",
+    desc: "Bespoke commissions, comics and short animated pieces for campaigns and personal projects.",
+  },
+];
+
+export const STATS = [
+  { value: "120+", label: "Projects delivered" },
+  { value: "8+", label: "Years illustrating" },
+  { value: "30+", label: "Published books" },
+  { value: "100%", label: "Made with heart" },
+];
+
+export const MARQUEE_WORDS = [
+  "Illustration",
+  "Storytelling",
+  "Book Covers",
+  "Character Design",
+  "Editorial",
+  "Branding",
+  "Comics",
+  "Motion",
+];
+
 export const BEHANCE_IMAGES = [
   // Appreciated projects
   { url: "https://mir-s3-cdn-cf.behance.net/projects/808/8d8998230303371.Y3JvcCw5NTg4LDc1MDAsMTQ0Nyww.png", name: "Isometric house" },

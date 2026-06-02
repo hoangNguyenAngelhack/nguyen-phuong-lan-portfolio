@@ -4,100 +4,113 @@ import { cn } from "@/lib/utils";
 import { LINKS, PERSONAL } from "@/mocks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useState } from "react";
+
+const menu = [
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Projects", path: "/projects" },
+  { name: "Contact", path: "/contact" },
+];
 
 export const Header = () => {
   const pathname = usePathname();
+  const { scrollY } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
 
-  const menu = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Projects", path: "/projects" },
-    { name: "Contact", path: "/contact" },
-  ];
+  useMotionValueEvent(scrollY, "change", (v) => {
+    setScrolled(v > 24);
+  });
 
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full flex flex-col items-center justify-center sticky top-0 bg-[#fffaf6]/80 backdrop-blur-md z-20 h-[131px] max-sm:h-[110px] border-b border-pink-100/50"
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "fixed top-0 inset-x-0 z-40 transition-all duration-500",
+        scrolled
+          ? "py-3 bg-[#07070a]/80 backdrop-blur-xl border-b border-white/[0.06]"
+          : "py-4 bg-transparent border-b border-transparent md:py-6"
+      )}
     >
-      <div className="max-w-[1200px] w-full flex flex-col relative px-4 max-sm:px-2 py-4 max-sm:py-2">
-        <div className="flex items-center w-full relative min-h-[48px]">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto text-center"
-          >
-            <Link href="/">
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                className="text-3xl max-sm:text-lg font-bold tracking-widest whitespace-nowrap bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient cursor-pointer inline-block"
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 sm:px-6">
+        {/* Logo */}
+        <Link href="/" className="group flex items-center gap-3">
+          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-accent to-accent-2 text-sm font-bold text-white shadow-[0_8px_30px_var(--accent-glow)]">
+            NL
+          </span>
+          <span className="hidden text-sm font-medium uppercase tracking-[0.25em] text-white/80 transition-colors group-hover:text-white sm:inline">
+            {PERSONAL}
+          </span>
+        </Link>
+
+        {/* Nav */}
+        <nav className="hidden items-center gap-1 md:flex">
+          {menu.map((item) => {
+            const active = pathname === item.path;
+            return (
+              <Link
+                key={item.name}
+                href={item.path}
+                className={cn(
+                  "relative rounded-full px-4 py-2 text-sm transition-colors",
+                  active ? "text-white" : "text-white/55 hover:text-white"
+                )}
               >
-                {PERSONAL}
-              </motion.span>
-            </Link>
-          </motion.div>
-          <motion.a
+                {active && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 -z-10 rounded-full bg-white/[0.08] ring-1 ring-white/10"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* CTA */}
+        <div className="flex items-center gap-3">
+          <a
             href={LINKS.behance}
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            whileHover={{ scale: 1.1, rotate: 360 }}
-            className="absolute right-0 max-sm:hidden"
+            className="hidden text-sm text-white/55 transition-colors hover:text-white sm:inline"
           >
-            <Image
-              src="/images/behance.png"
-              className="sm:size-[40px]"
-              alt="Behance Logo"
-              width={40}
-              height={40}
-            />
-          </motion.a>
+            Behance
+          </a>
+          <Link
+            href="/contact"
+            className="group relative overflow-hidden rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
+          >
+            <span className="relative z-10">Let&apos;s talk</span>
+          </Link>
         </div>
-        <nav className="h-[40px] max-sm:h-[36px] w-full flex flex-wrap justify-center items-center">
-          {menu.map((item, index) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-            >
-              <Link
-                href={item.path}
-                className={cn(
-                  "relative mx-4 max-sm:mx-2 my-1 text-[20px] max-sm:text-[14px] transition-colors duration-300",
-                  {
-                    "font-bold text-pink-500": pathname === item.path,
-                    "font-normal text-gray-600 hover:text-pink-400":
-                      pathname !== item.path,
-                  }
-                )}
-              >
-                <motion.span
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                  className="inline-block"
-                >
-                  {item.name}
-                </motion.span>
-                {pathname === item.path && (
-                  <motion.div
-                    layoutId="activeNav"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-              </Link>
-            </motion.div>
-          ))}
-        </nav>
       </div>
+
+      {/* Mobile nav row */}
+      <nav className="mt-3 flex items-center justify-center gap-1.5 px-4 md:hidden">
+        {menu.map((item) => {
+          const active = pathname === item.path;
+          return (
+            <Link
+              key={item.name}
+              href={item.path}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-xs transition-colors",
+                active
+                  ? "bg-white/[0.08] text-white ring-1 ring-white/10"
+                  : "text-white/55"
+              )}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
+      </nav>
     </motion.header>
   );
 };

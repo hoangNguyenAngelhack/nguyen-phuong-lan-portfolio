@@ -1,213 +1,185 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { BEHANCE_IMAGES } from "@/mocks";
 
-const featuredImages = BEHANCE_IMAGES.slice(0, 3);
+const HeroCanvas = dynamic(() => import("@/components/three/hero-canvas"), {
+  ssr: false,
+});
+
+const featured = BEHANCE_IMAGES.slice(0, 3);
 
 export const HeroSection = () => {
-  const scrollToGallery = () => {
-    const gallery = document.getElementById("gallery");
-    gallery?.scrollIntoView({ behavior: "smooth" });
-  };
+  const root = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".hero-badge", { y: 20, opacity: 0, duration: 0.6 })
+        .from(
+          ".hero-line",
+          { yPercent: 110, opacity: 0, duration: 1, stagger: 0.12 },
+          "-=0.2"
+        )
+        .from(
+          ".hero-sub",
+          { y: 24, opacity: 0, duration: 0.8 },
+          "-=0.5"
+        )
+        .from(
+          ".hero-cta",
+          { y: 20, opacity: 0, duration: 0.6, stagger: 0.1 },
+          "-=0.4"
+        )
+        .from(
+          ".hero-card",
+          { y: 60, opacity: 0, scale: 0.92, duration: 1, stagger: 0.12 },
+          "-=0.8"
+        );
+
+      // Floating loop on the cards
+      gsap.to(".hero-card", {
+        y: "+=14",
+        duration: 3,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        stagger: { each: 0.4, from: "random" },
+      });
+    },
+    { scope: root }
+  );
+
+  const scrollToGallery = () =>
+    document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <section className="relative min-h-[80vh] flex items-center px-4 py-12 overflow-hidden">
-      {/* Subtle Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 left-0 w-72 h-72 bg-pink-100/50 rounded-full blur-[80px]" />
-        <div className="absolute bottom-20 right-0 w-64 h-64 bg-purple-100/50 rounded-full blur-[80px]" />
+    <section
+      ref={root}
+      className="relative flex min-h-[80vh] items-center overflow-hidden px-6 pb-20 md:min-h-[92vh] md:pb-0"
+    >
+      {/* 3D particle background */}
+      <div className="absolute inset-0 -z-10 opacity-70">
+        <HeroCanvas />
       </div>
+      {/* Vignette to keep text legible */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_30%,#07070a_85%)]" />
 
-      <div className="max-w-[1200px] mx-auto w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Side - Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="order-2 lg:order-1"
-          >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mb-6"
-            >
-              <span
-                className="inline-block px-4 py-1.5 bg-pink-50 text-pink-600 rounded-full text-sm"
-                style={{ fontFamily: "Patrick Hand, cursive" }}
-              >
-                Digital Artist & Illustrator
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-12 lg:gap-8">
+        {/* Left — copy */}
+        <div className="lg:col-span-6">
+          <span className="hero-badge inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-[10px] uppercase tracking-[0.15em] text-white/70 sm:px-4 sm:text-xs sm:tracking-[0.25em]">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+            Illustration & Visual Storytelling
+          </span>
+
+          <h1 className="mt-6 font-display text-4xl leading-[1.08] text-white sm:mt-7 sm:text-6xl sm:leading-[1.05] lg:text-7xl">
+            <span className="block overflow-hidden">
+              <span className="hero-line block">Where imagination</span>
+            </span>
+            <span className="block overflow-hidden">
+              <span className="hero-line block text-gradient">
+                comes to life
               </span>
-            </motion.div>
+            </span>
+          </h1>
 
-            {/* Tagline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 mb-6 leading-tight"
-              style={{ fontFamily: "Pacifico, cursive" }}
+          <p className="hero-sub mt-7 max-w-md text-lg leading-relaxed text-white/55">
+            I craft illustrations and visual worlds that tell stories, spark
+            emotion, and turn ideas into art — for books, brands and beyond.
+          </p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <button
+              onClick={scrollToGallery}
+              className="hero-cta group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
             >
-              Where imagination
-              <br />
-              <span className="text-pink-500">comes to life</span>
-            </motion.h1>
-
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg text-gray-500 mb-8 max-w-md leading-relaxed"
-              style={{ fontFamily: "Patrick Hand, cursive" }}
+              View my work
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
+            <Link
+              href="/contact"
+              className="hero-cta inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 text-sm text-white/80 transition-colors hover:border-white/30 hover:text-white"
             >
-              Creating magical illustrations that tell stories, spark emotions,
-              and bring your creative visions to reality.
-            </motion.p>
+              Let&apos;s talk
+            </Link>
+          </div>
+        </div>
 
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap gap-4"
-            >
-              <motion.button
-                onClick={scrollToGallery}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full text-lg hover:bg-gray-800 transition-colors"
-                style={{ fontFamily: "Patrick Hand, cursive" }}
-              >
-                View My Work
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-
-              <Link href="/contact">
-                <motion.span
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex px-6 py-3 text-gray-700 rounded-full text-lg border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
-                  style={{ fontFamily: "Patrick Hand, cursive" }}
-                >
-                  Let&apos;s Talk
-                </motion.span>
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Side - Featured Art Collage */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="order-1 lg:order-2"
-          >
-            <div className="relative flex items-center justify-center" style={{ minHeight: "520px" }}>
-              {/* Secondary Image - Behind left, tilted */}
-              {featuredImages[1] && (
-                <motion.div
-                  initial={{ opacity: 0, rotate: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, rotate: -8, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  whileHover={{ rotate: -2, scale: 1.05, zIndex: 20 }}
-                  className="absolute left-0 top-6 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-4 border-white z-[1] cursor-pointer hidden md:block"
-                >
-                  <Image
-                    src={featuredImages[1].url}
-                    alt={featuredImages[1].name || "Artwork"}
-                    fill
-                    className="object-cover"
-                    sizes="200px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                    <span className="text-white text-sm" style={{ fontFamily: "Patrick Hand, cursive" }}>
-                      {featuredImages[1].name}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Main Featured Image - Center, on top */}
-              {featuredImages[0] && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  className="relative z-10 w-[75%] md:w-[65%] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-pink-500/20 border-4 border-white cursor-pointer"
-                >
-                  <Image
-                    src={featuredImages[0].url}
-                    alt={featuredImages[0].name || "Featured artwork"}
-                    fill
-                    className="object-cover"
-                    sizes="400px"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <span className="text-white text-lg font-medium" style={{ fontFamily: "Patrick Hand, cursive" }}>
-                      {featuredImages[0].name}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Third Image - Behind right, tilted */}
-              {featuredImages[2] && (
-                <motion.div
-                  initial={{ opacity: 0, rotate: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, rotate: 7, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  whileHover={{ rotate: 1, scale: 1.05, zIndex: 20 }}
-                  className="absolute right-0 bottom-6 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-4 border-white z-[1] cursor-pointer hidden md:block"
-                >
-                  <Image
-                    src={featuredImages[2].url}
-                    alt={featuredImages[2].name || "Artwork"}
-                    fill
-                    className="object-cover"
-                    sizes="200px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                    <span className="text-white text-sm" style={{ fontFamily: "Patrick Hand, cursive" }}>
-                      {featuredImages[2].name}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Decorative elements */}
-              <div className="absolute -top-6 -right-6 w-28 h-28 bg-pink-200/40 rounded-full blur-2xl" />
-              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-purple-200/40 rounded-full blur-2xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-pink-100/30 rounded-full blur-3xl -z-10" />
-            </div>
-          </motion.div>
+        {/* Right — floating art collage */}
+        <div className="relative lg:col-span-6">
+          <div className="relative mx-auto h-[360px] w-full max-w-sm sm:h-[540px] sm:max-w-md">
+            {featured[1] && (
+              <ArtCard
+                src={featured[1].url}
+                name={featured[1].name}
+                className="absolute left-0 top-8 w-[52%] -rotate-6"
+              />
+            )}
+            {featured[2] && (
+              <ArtCard
+                src={featured[2].url}
+                name={featured[2].name}
+                className="absolute bottom-4 right-0 w-[52%] rotate-6"
+              />
+            )}
+            {featured[0] && (
+              <ArtCard
+                src={featured[0].url}
+                name={featured[0].name}
+                priority
+                className="absolute left-1/2 top-1/2 z-10 w-[64%] -translate-x-1/2 -translate-y-1/2 glow-accent"
+              />
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2"
+      {/* Scroll cue */}
+      <button
+        onClick={scrollToGallery}
+        className="absolute bottom-7 left-1/2 -translate-x-1/2 text-white/40 transition-colors hover:text-white animate-float-slow"
+        aria-label="Scroll to gallery"
       >
-        <motion.button
-          onClick={scrollToGallery}
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-        >
-          <ArrowDown className="w-5 h-5" />
-        </motion.button>
-      </motion.div>
+        <ArrowDown className="h-5 w-5" />
+      </button>
     </section>
   );
 };
+
+function ArtCard({
+  src,
+  name,
+  className,
+  priority,
+}: {
+  src: string;
+  name: string;
+  className?: string;
+  priority?: boolean;
+}) {
+  return (
+    <div
+      className={`hero-card group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50 ${className ?? ""}`}
+    >
+      <Image
+        src={src}
+        alt={name}
+        fill
+        sizes="400px"
+        priority={priority}
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <span className="text-sm text-white/90">{name}</span>
+      </div>
+    </div>
+  );
+}
