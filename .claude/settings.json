@@ -41,7 +41,10 @@
       "Bash(/usr/bin/pkill -9 -f \"next\")",
       "Bash(/bin/rm -f /tmp/scan.txt /tmp/scan2.txt /tmp/build.log /tmp/start.log /tmp/port.txt)",
       "Bash(/usr/bin/head -40)",
-      "Bash(/usr/bin/wc -l)"
+      "Bash(/usr/bin/wc -l)",
+      "Bash(/usr/bin/tail -3 /tmp/build.log)",
+      "Bash(/usr/bin/grep -E \"/admin\" /tmp/build.log)",
+      "Bash(/bin/rm -f /tmp/admin-login.png /tmp/admin-dash.png /tmp/build.log /tmp/start.log /tmp/port.txt)"
     ]
   }
 }
