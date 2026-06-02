@@ -1,45 +1,36 @@
 import type { Metadata } from "next";
-import { Pacifico, Caveat, Patrick_Hand } from "next/font/google";
+import { Pacifico, Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
 
-const PacificoSans = Pacifico({
+const pacifico = Pacifico({
   variable: "--font-pacifico-sans",
   subsets: ["latin"],
   weight: "400",
 });
 
-const CaveatSans = Caveat({
-  variable: "--font-caveat-sans",
+const geist = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: "400",
-});
-const Patrick_HandSans = Patrick_Hand({
-  variable: "--font-patrick-hand-sans",
-  subsets: ["latin"],
-  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Lan Nguyen Portfolio",
-  description: "Portfolio of Lan Nguyen | Digital Artist",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Admin — Nguyen Phuong Lan",
+  description: "Manage portfolio images",
+  icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={cn(
-          PacificoSans.variable,
-          CaveatSans.variable,
-          Patrick_HandSans.variable,
+          pacifico.variable,
+          geist.variable,
           "antialiased page-container"
         )}
       >
