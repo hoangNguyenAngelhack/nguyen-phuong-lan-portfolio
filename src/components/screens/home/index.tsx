@@ -5,16 +5,12 @@ import Masonry from "react-masonry-css";
 import { useEffect, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
-import { BEHANCE_IMAGES, SERVICES, STATS, MARQUEE_WORDS } from "@/mocks";
+import { SERVICES, STATS, MARQUEE_WORDS } from "@/mocks";
 import { Reveal } from "@/components/common/reveal";
 import { HeroSection } from "./hero-section";
+import { FeaturedImage, getImageSrc } from "@/lib/utils";
 
 const breakpointColumnsObj = { default: 3, 1100: 2, 700: 1 };
-type FeaturedImage = {
-  url: string;
-  name: string;
-  isCloudinary?: boolean;
-};
 
 const HomeScreen = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -26,8 +22,8 @@ const HomeScreen = () => {
     setLightboxOpen(true);
   };
 
-  const lightboxSlides = BEHANCE_IMAGES.map((img) => ({
-    src: img.url,
+  const lightboxSlides = featuredImages.map((img) => ({
+    src: getImageSrc(img),
     alt: img.name,
   }));
 
@@ -55,13 +51,6 @@ const HomeScreen = () => {
       });
   }, []);
 
-  const getImageSrc = (img: FeaturedImage) => {
-    if (img.isCloudinary) {
-      return `/api/proxy?url=${encodeURIComponent(img.url)}`;
-    }
-    return img.url;
-  };
-
   return (
     <>
       <HeroSection />
@@ -71,7 +60,7 @@ const HomeScreen = () => {
       {/* SERVICES */}
       <section className="mx-auto max-w-7xl px-6 py-16 sm:py-28">
         <Reveal>
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-[var(--accent)]">
+          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-accent">
             What I do
           </p>
           <h2 className="max-w-2xl font-display text-4xl leading-tight text-white sm:text-5xl">
@@ -81,7 +70,7 @@ const HomeScreen = () => {
 
         <Reveal
           stagger
-          className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:mt-16 sm:grid-cols-2"
+          className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/6 bg-white/6 sm:mt-16 sm:grid-cols-2"
         >
           {SERVICES.map((s) => (
             <div
@@ -90,7 +79,7 @@ const HomeScreen = () => {
             >
               <div className="flex items-baseline justify-between">
                 <span className="text-sm text-white/30">{s.no}</span>
-                <span className="h-2 w-2 rounded-full bg-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="h-2 w-2 rounded-full bg-accent opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
               <h3 className="mt-6 text-2xl font-medium text-white">
                 {s.title}
@@ -105,7 +94,7 @@ const HomeScreen = () => {
       <section id="gallery" className="mx-auto max-w-7xl px-6 py-12 sm:py-20">
         <Reveal className="mb-10 flex flex-col gap-4 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[var(--accent)]">
+            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent">
               Selected work
             </p>
             <h2 className="font-display text-4xl text-white sm:text-5xl">
@@ -126,11 +115,11 @@ const HomeScreen = () => {
           {featuredImages.map((img, i) => (
             <div
               key={i}
-              className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-white/[0.06]"
+              className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-white/6"
               onClick={() => openLightbox(i)}
             >
               <Image
-                src={img.url}
+                src={getImageSrc(img)}
                 alt={img.name}
                 width={600}
                 height={750}
@@ -138,7 +127,7 @@ const HomeScreen = () => {
                 priority={i < 3}
                 className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-black/80 via-transparent to-transparent p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <span className="text-white">{img.name}</span>
               </div>
             </div>
@@ -150,7 +139,7 @@ const HomeScreen = () => {
       <section className="mx-auto max-w-7xl px-6 py-14 sm:py-24">
         <Reveal
           stagger
-          className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] md:grid-cols-4"
+          className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/6 bg-white/6 md:grid-cols-4"
         >
           {STATS.map((s) => (
             <div key={s.label} className="bg-[#0b0b10] p-6 text-center sm:p-8">
@@ -177,12 +166,12 @@ const HomeScreen = () => {
 function Marquee() {
   const words = [...MARQUEE_WORDS, ...MARQUEE_WORDS];
   return (
-    <div className="relative flex overflow-hidden border-y border-white/[0.06] py-6">
+    <div className="relative flex overflow-hidden border-y border-white/6 py-6">
       <div className="flex shrink-0 animate-marquee items-center gap-8 pr-8">
         {words.map((w, i) => (
           <span key={i} className="flex items-center gap-8">
             <span className="font-display text-2xl text-white/30">{w}</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           </span>
         ))}
       </div>
@@ -193,7 +182,7 @@ function Marquee() {
         {words.map((w, i) => (
           <span key={i} className="flex items-center gap-8">
             <span className="font-display text-2xl text-white/30">{w}</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           </span>
         ))}
       </div>
