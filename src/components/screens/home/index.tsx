@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Masonry from "react-masonry-css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { BEHANCE_IMAGES, SERVICES, STATS, MARQUEE_WORDS } from "@/mocks";
@@ -10,10 +10,16 @@ import { Reveal } from "@/components/common/reveal";
 import { HeroSection } from "./hero-section";
 
 const breakpointColumnsObj = { default: 3, 1100: 2, 700: 1 };
+type FeaturedImage = {
+  url: string;
+  name: string;
+  isCloudinary?: boolean;
+};
 
 const HomeScreen = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [featuredImages, setFeaturedImages] = useState<FeaturedImage[]>([]);
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -24,6 +30,37 @@ const HomeScreen = () => {
     src: img.url,
     alt: img.name,
   }));
+
+  useEffect(() => {
+    fetch("/api/list-images")
+      .then((res) => res.json())
+      .then((data) => {
+        const cloudinaryImages = (data.images || [])
+          .slice(0, 3)
+          .map((img: { secure_url: string; display_name: string }) => ({
+            url: img.secure_url,
+            name: img.display_name || "Artwork",
+            isCloudinary: true,
+          }));
+        // If we have cloudinary images, use them; otherwise use Behance
+        if (cloudinaryImages.length >= 3) {
+          setFeaturedImages(cloudinaryImages);
+        } else {
+          setFeaturedImages([...cloudinaryImages]);
+        }
+      })
+      .catch(() => {
+        // On error, use Behance images
+        setFeaturedImages([]);
+      });
+  }, []);
+
+  const getImageSrc = (img: FeaturedImage) => {
+    if (img.isCloudinary) {
+      return `/api/proxy?url=${encodeURIComponent(img.url)}`;
+    }
+    return img.url;
+  };
 
   return (
     <>
@@ -42,7 +79,10 @@ const HomeScreen = () => {
           </h2>
         </Reveal>
 
-        <Reveal stagger className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:mt-16 sm:grid-cols-2">
+        <Reveal
+          stagger
+          className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:mt-16 sm:grid-cols-2"
+        >
           {SERVICES.map((s) => (
             <div
               key={s.no}
@@ -52,7 +92,9 @@ const HomeScreen = () => {
                 <span className="text-sm text-white/30">{s.no}</span>
                 <span className="h-2 w-2 rounded-full bg-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
-              <h3 className="mt-6 text-2xl font-medium text-white">{s.title}</h3>
+              <h3 className="mt-6 text-2xl font-medium text-white">
+                {s.title}
+              </h3>
               <p className="mt-3 text-white/50">{s.desc}</p>
             </div>
           ))}
@@ -71,7 +113,8 @@ const HomeScreen = () => {
             </h2>
           </div>
           <p className="max-w-sm text-white/50">
-            A living collection of illustrations, book covers and visual stories.
+            A living collection of illustrations, book covers and visual
+            stories.
           </p>
         </Reveal>
 
@@ -80,7 +123,7 @@ const HomeScreen = () => {
           className="masonry-grid"
           columnClassName="masonry-grid_column"
         >
-          {BEHANCE_IMAGES.map((img, i) => (
+          {featuredImages.map((img, i) => (
             <div
               key={i}
               className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-white/[0.06]"
